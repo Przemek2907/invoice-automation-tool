@@ -1,5 +1,15 @@
+import settings_file_service
+
+
 def obtain_user_data(question):
     return input(question)
+
+
+def trigger_menu_flow():
+    if settings_file_service.get_settings_file_location() == "No file defined":
+        compose_user_menu()
+    else:
+        settings_file_service.load_settings_file()
 
 
 def compose_user_menu():
@@ -21,9 +31,11 @@ def compose_user_menu():
     user_data_dict = dict(user_data)
 
     if save_data.lower() == 'y':
-        save_data_to_file(user_data_dict, input("Podaj ścieżkę zapisu pliku:\n"))
-    else:
-        return user_data_dict
+        save_path = input("Podaj ścieżkę (absolute path) zapisu pliku:\n")
+        settings_file_service.add_invoice_setting_file_as_env_var(save_path)
+        save_data_to_file(user_data_dict, save_path)
+        print(f'File with settings has been save to : {save_path}')
+    return user_data_dict
 
 
 def save_data_to_file(user_data_to_file, file_path_to_save_data):
